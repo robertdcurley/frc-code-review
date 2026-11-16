@@ -5,15 +5,22 @@
 use std::process::Command;
 
 fn main() {
-    // Use "sh -c" on Linux/macOS
-        let output=Command::new("sh")
-        .arg("-c")
-        .arg("git ls-tree -d --name-only origin/main:src/main/java/frc/robot/subsystems")
+    let output = Command::new("git")
+        .args([
+            "ls-tree",
+            "-d",
+            "--name-only",
+            "origin/main:src/main/java/frc/robot/subsystems",
+        ])
         .output()
         .expect("Failed to execute command");
 
-    // Convert the captured stdout bytes into a readable string
     let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+
     println!("Status: {}", output.status);
     println!("Output: {}", stdout);
+    if !stderr.is_empty() {
+        eprintln!("Stderr: {}", stderr);
+    }
 }
